@@ -1,0 +1,29 @@
+- name: Deploy Automated Website Update
+  hosts: webservers
+  become: true
+  tasks:
+    - name: Ensure Apache (httpd) is installed on the server
+      dnf:
+        name: httpd
+        state: present # Installs httpd if it is missing; skips if already installed
+
+    - name: Ensure Apache is running and enabled on boot
+      service:
+        name: httpd
+        state: started
+        enabled: true
+
+    - name: Copy Website index.html to Web Root
+      copy:
+        src: index.html
+        dest: /var/www/html/index.html
+        owner: apache
+        group: apache
+        mode: '0644'
+
+    - name: Restart Apache Web Server (httpd)
+      service:
+        name: httpd
+        state: restarted
+
+
